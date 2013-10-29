@@ -1,0 +1,7 @@
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Release\XsdDownloader.exe.config
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Release\XsdDownloader.exe
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Release\XsdDownloader.pdb
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Release\CommandLine.dll
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Release\CommandLine.xml
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\obj\Release\XsdDownloader.exe
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\obj\Release\XsdDownloader.pdb

@@ -1,0 +1,8 @@
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Debug\XsdDownloader.exe.config
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Debug\XsdDownloader.exe
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Debug\XsdDownloader.pdb
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Debug\CommandLine.dll
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\bin\Debug\CommandLine.xml
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\obj\Debug\XsdDownloader.csprojResolveAssemblyReference.cache
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\obj\Debug\XsdDownloader.exe
+C:\home\mosis\work\VZD GIS\codebase\XsdDownloader\XsdDownloader\obj\Debug\XsdDownloader.pdb
