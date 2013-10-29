@@ -19,7 +19,7 @@ namespace XsdDownloader {
                 return;
 
             // Download & process XSDs
-            if (String.IsNullOrWhiteSpace(Params.OutputDirectory))
+            if (String.IsNullOrEmpty(Params.OutputDirectory))
                 Params.OutputDirectory = ".";
             if (!Directory.Exists(Params.OutputDirectory))
                 Directory.CreateDirectory(Params.OutputDirectory);
@@ -29,13 +29,13 @@ namespace XsdDownloader {
             }
 
             // Generate batch file for xsd.exe
-            var sb = new StringBuilder("xsd.exe /c");
+            var sb = new StringBuilder("xsd /c");
 
             foreach (var baseName in Params.InputFiles.Select(Path.GetFileName)) {
                 AddToImported(baseName);
             }
 
-            if (!String.IsNullOrWhiteSpace(Params.Namespace))
+            if (!String.IsNullOrEmpty(Params.Namespace))
                 sb.Append(" /namespace:").Append(Params.Namespace);
 
             foreach (var imported in Imported) {

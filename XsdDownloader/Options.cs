@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommandLine;
 using CommandLine.Text;
 
 namespace XsdDownloader {
     class Options {
-        [OptionList('i', "input", ';', Required = true, HelpText = "URL of the root XSD file(s).")]
+        [OptionList('i', "input", ';', Required = true, HelpText = "URL(s) of the root XSD file(s).")]
         public IList<String> InputFiles { get; set; }
 
         [Option('o', "output", HelpText = "Directory where to save all downloaded files.")]
