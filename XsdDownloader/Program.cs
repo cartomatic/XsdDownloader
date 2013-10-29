@@ -29,7 +29,9 @@ namespace XsdDownloader {
             }
 
             // Generate batch file for xsd.exe
-            var sb = new StringBuilder("xsd /c");
+            if (String.IsNullOrEmpty(Params.Executable))
+                Params.Executable = "xsd";
+            var sb = new StringBuilder("\"").Append(Params.Executable).Append("\" /c");
 
             foreach (var baseName in Params.InputFiles.Select(Path.GetFileName)) {
                 AddToImported(baseName);
