@@ -1,5 +1,5 @@
-bin/Debug
-obj
+**/bin/Debug/
+obj/
 *.pdb
 *.suo
 *.user

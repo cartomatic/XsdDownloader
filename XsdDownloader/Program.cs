@@ -35,8 +35,8 @@ namespace XsdDownloader {
                 Console.WriteLine("{0,7}: {1}", task.Value.ToString().ToUpperInvariant(), uri);
 
                 // Set paths
-                var folder = Params.OutputDirectory + Path.GetDirectoryName(uri.LocalPath);
-                var file = Path.GetFullPath(Params.OutputDirectory + uri.LocalPath);
+                var file = Path.GetFullPath(Params.OutputDirectory + @"\" + uri.Host + @"\" + uri.LocalPath);
+                var folder = Path.GetDirectoryName(file);
                 var remoteFolder = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length - 1);
 
                 // Download the file
