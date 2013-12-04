@@ -9,9 +9,11 @@ using System.Xml.Linq;
 namespace XsdDownloader {
     class Program {
         public static Options Params = new Options();
-        public static List<String> Processed = new List<String>();
-        public static List<String> Imported = new List<string>();
-        public static List<String> Included = new List<string>();
+        public enum DownloadType {
+            Direct,
+            Include,
+            Import
+        }
 
         static void Main(string[] args)
         {
@@ -21,76 +23,66 @@ namespace XsdDownloader {
             // Download & process XSDs
             if (String.IsNullOrEmpty(Params.OutputDirectory))
                 Params.OutputDirectory = ".";
-            if (!Directory.Exists(Params.OutputDirectory))
-                Directory.CreateDirectory(Params.OutputDirectory);
 
-            foreach (var inputFile in Params.InputFiles) {
-                DownloadAndParse(inputFile);
+            var toGet = Params.InputFiles.ToDictionary(s => s, s => DownloadType.Direct);
+            var gotten = new HashSet<String>();
+            var toBat = new HashSet<String>();
+
+            while (toGet.Count > 0) {
+                var task = toGet.First();
+                var uri = new Uri(task.Key);
+
+                Console.WriteLine("{0,7}: {1}", task.Value.ToString().ToUpperInvariant(), uri);
+
+                // Set paths
+                var folder = Params.OutputDirectory + Path.GetDirectoryName(uri.LocalPath);
+                var file = Path.GetFullPath(Params.OutputDirectory + uri.LocalPath);
+                var remoteFolder = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length - 1);
+
+                // Download the file
+                Directory.CreateDirectory(folder);
+                using (var client = new WebClient()) {
+                    client.DownloadFile(uri, file);
+                }
+
+                // Add imports to .bat command
+                if (task.Value == DownloadType.Import || task.Value == DownloadType.Direct)
+                    toBat.Add(file);
+
+                var doc = XDocument.Load(file);
+
+                // Find and queue includes and imports
+                foreach (var element in doc.Descendants()
+                              .Where(e => e.Name.LocalName == "include" || e.Name.LocalName == "import"))
+                {
+                    var schemaFile = element.Attribute("schemaLocation").Value;
+                    var type = DownloadType.Import;
+                    if (element.Name.LocalName == "include") {
+                        schemaFile = remoteFolder + "/" + schemaFile;
+                        type = DownloadType.Include;
+                    }
+                    if (!toGet.ContainsKey(schemaFile) && !gotten.Contains(schemaFile))
+                        toGet.Add(schemaFile, type);
+                }
+
+                gotten.Add(task.Key);
+                toGet.Remove(task.Key);
             }
 
-            // Generate batch file for xsd.exe
+            // Generate batch 
             if (String.IsNullOrEmpty(Params.Executable))
                 Params.Executable = "xsd";
             var sb = new StringBuilder("\"").Append(Params.Executable).Append("\" /c");
 
-            foreach (var baseName in Params.InputFiles.Select(Path.GetFileName)) {
-                AddToImported(baseName);
-            }
-
             if (!String.IsNullOrEmpty(Params.Namespace))
                 sb.Append(" /namespace:").Append(Params.Namespace);
 
-            foreach (var imported in Imported) {
-                sb.Append(" ").Append(imported);
+            foreach (var imported in toBat) {
+                sb.Append(" ^\r\n ").Append(imported);
             }
 
             File.WriteAllText(Params.OutputDirectory + @"\create_classes_from_xsd.bat", sb.ToString());
         }
 
-        static void DownloadAndParse(String url)
-        {
-            // Skip already processed XSDs
-            if (Processed.Contains(url)) {
-                return;
-            }
-
-            Console.WriteLine("Downloading and parsing: " + url);
-            // Initialize paths
-            var uri = new Uri(url);
-            var fileName = Params.OutputDirectory + @"\" + Path.GetFileName(uri.LocalPath);
-            var baseUri = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length);
-            XDocument doc;
-
-            // Download and parse
-            using (var client = new WebClient()) {
-                client.DownloadFile(url, fileName);
-                doc = XDocument.Load(fileName);
-            }
-
-            // Recursively download all <include>d schemas
-            foreach (var schemaFile in doc.Descendants()
-                                          .Where(e => e.Name.LocalName == "include")
-                                          .Select(e => e.Attribute("schemaLocation").Value)) {
-                DownloadAndParse(baseUri + schemaFile);
-                Included.Add(schemaFile);
-            }
-
-            // Recursively download all <import>ed schemas and put them on the command line (since
-            // xsd.exe expects <import> 
-            foreach (var path in doc.Descendants()
-                                    .Where(e => e.Name.LocalName == "import")
-                                    .Select(e => e.Attribute("schemaLocation").Value)) {
-                AddToImported(path);
-                DownloadAndParse(path);
-            }
-
-            Processed.Add(url);
-        }
-
-        static void AddToImported(String filename)
-        {
-            if (!Imported.Contains(Path.GetFileName(filename)) && !Included.Contains(Path.GetFileName(filename)))
-                Imported.Add(Path.GetFileName(filename));
-        }
     }
 }
