@@ -78,7 +78,7 @@ namespace XsdDownloader {
                 sb.Append(" /namespace:").Append(Params.Namespace);
 
             foreach (var imported in toBat) {
-                sb.Append(" ^\r\n ").Append(imported);
+                sb.Append(" ^\r\n \"").Append(imported).Append("\"");
             }
 
             File.WriteAllText(Params.OutputDirectory + @"\create_classes_from_xsd.bat", sb.ToString());
